@@ -10,17 +10,19 @@ def write_log(message: str):
     with open("log.txt", "a") as f:
         f.write(message + "\n")
 
-@router.post("/create-user/")
+@router.post("/create-user/", operation_id="CreateUser", tags=["Create User"])
 async def create_user(user: dict = Depends(Params.user_form)):
     return {"message": "User created successfully", "user": user}
 
 
-@router.post("/value-error/")
+@router.post("/value-error/", operation_id="ValueError", tags=["Error Handling"])
 async def value_error_endpoint():
     raise ValueError("This is a custom value error")
 
 @router.post(
     "/image/",
+    operation_id="UploadImage",
+    tags=["Upload"],
     responses={
         200: {
             "description": "Successful Response",
@@ -40,12 +42,12 @@ async def image_upload(image: UploadFile = Depends(Params.image_upload)):
     content = await image.read()
     return StreamingResponse(BytesIO(content), media_type=image.content_type)
 
-@router.post("/video/")
+@router.post("/video/", operation_id="UploadVideo", tags=["Upload"])
 async def video_upload(video: UploadFile = Depends(Params.video_upload)):
     content = await video.read()
     return FileResponse(BytesIO(content), media_type=video.content_type, filename=video.filename)
 
-@router.post("/notify/")
+@router.post("/notify/", operation_id="Notify", tags=["Notifications"])
 async def notify(background_tasks: BackgroundTasks):
     background_tasks.add_task(write_log, "Notification sent")
     return {"message": "Notification will be logged in the background"}
