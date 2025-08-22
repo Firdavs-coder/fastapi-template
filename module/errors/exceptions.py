@@ -36,9 +36,19 @@ class HandlingErrors:
     @staticmethod
     async def permission_error_handler(request: Request, exc: PermissionError):
         return JSONResponse(
-            status_code=403,
+            status_code=401,
             content={
-                "error": "Permission denied",
+                "error": "Unauthorized",
                 "message": str(exc),
+            },
+        )
+
+    @staticmethod
+    async def internal_server_error_handler(request: Request, exc: Exception):
+        return JSONResponse(
+            status_code=500,
+            content={
+                "error": "Internal Server Error",
+                "message": "An unexpected error occurred",
             },
         )

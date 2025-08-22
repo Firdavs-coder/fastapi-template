@@ -19,7 +19,23 @@ async def create_user(user: dict = Depends(Params.user_form)):
 async def value_error_endpoint():
     raise ValueError("This is a custom value error")
 
-@router.post("/image/")
+@router.post(
+    "/image/",
+    responses={
+        200: {
+            "description": "Successful Response",
+            "content": {
+                "image/*": {
+                    "schema": {
+                        "type": "string",
+                        "format": "binary"
+                    },
+                    "example": "<binary image data>"
+                }
+            }
+        }
+    }
+)
 async def image_upload(image: UploadFile = Depends(Params.image_upload)):
     content = await image.read()
     return StreamingResponse(BytesIO(content), media_type=image.content_type)
